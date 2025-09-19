@@ -10,8 +10,9 @@ import (
 )
 
 type Message struct {
-	Role    string `json:"role"`
-	Content string `json:"content"`
+	Role             string `json:"role"`
+	Content          string `json:"content"`
+	ReasoningContent string `json:"reasoning_content,omitempty"`
 }
 
 type RequestBody struct {
@@ -35,14 +36,9 @@ type Choice struct {
 }
 
 // 请求deepseek的AI
-func SendMessage(message []Message) (respose ResponseBody) {
+func SendMessage(requestBody RequestBody) (respose ResponseBody) {
 	url := "https://api.deepseek.com/chat/completions"
-	requestBody := RequestBody{
-		Model:    "deepseek-chat",
-		Messages: message,
-		Stream:   false,
-	}
-	apiKey := "sk-1453d26657024ff9bb290c3bc8afe529" // 替换为你的实际API密钥
+	apiKey := "" // 替换为你的实际API密钥
 
 	jsonData, err := json.Marshal(requestBody)
 	if err != nil {
@@ -88,6 +84,9 @@ func SendMessage(message []Message) (respose ResponseBody) {
 		fmt.Printf("响应内容: %s\n", string(body))
 		return
 	}
+
+	var bodyStr = string(body)
+	fmt.Printf("响应体: %s\n", bodyStr)
 
 	err = json.Unmarshal(body, &respose)
 	if err != nil {
